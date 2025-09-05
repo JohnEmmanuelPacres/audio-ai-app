@@ -103,7 +103,7 @@ def get_audio_insights(audio_file):
         return transcript.text, speaker_text, sentiments, None
 
     except Exception as e:
-        # Clean up temporary file if it exists
+        # Clean up temporary file if it existss
         if os.path.exists("temp_audio.mp3"):
             os.remove("temp_audio.mp3")
         return "", "", [], f"An error occurred: {str(e)}"
