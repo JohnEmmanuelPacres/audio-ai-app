@@ -1,5 +1,5 @@
-streamlit==1.28.1
-assemblyai==0.4.3
-spacy==3.7.2
-python-dotenv==1.0.0
+streamlit>=1.28.1
+assemblyai>=0.43.1
+spacy>=3.7.2
+python-dotenv>=1.0.0
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
