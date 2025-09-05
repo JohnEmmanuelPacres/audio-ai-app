@@ -96,4 +96,55 @@ def basic_sentiment_analysis(text):
     else:
         return "NEUTRAL"
 
-# ... rest of your get_audio_insights function ...
+def get_audio_insights(audio_file):
+    """
+    This function takes an audio file and returns the transcript,
+    speaker labels, and sentiment analysis results.
+    """
+    try:
+        # Create a temporary file
+        with open("temp_audio.mp3", "wb") as f:
+            f.write(audio_file.getbuffer())
+        
+        # Configuration for speaker diarization
+        config = aai.TranscriptionConfig(
+            speaker_labels=True,
+            sentiment_analysis=False
+        )
+
+        transcriber = aai.Transcriber()
+        transcript = transcriber.transcribe("temp_audio.mp3", config)
+
+        # Clean up temporary file
+        if os.path.exists("temp_audio.mp3"):
+            os.remove("temp_audio.mp3")
+
+        if transcript.status == aai.TranscriptStatus.error:
+            return "", "", [], f"Transcription error: {transcript.error}"
+        
+        if not transcript.utterances:
+            return transcript.text, "", [], "No utterances found"
+
+        # Extracting speaker information
+        speaker_text = ""
+        sentiments = []
+        
+        for utterance in transcript.utterances:
+            speaker_text += f"Speaker {utterance.speaker}: {utterance.text}\n"
+
+            # Analyze sentiment using spaCy
+            sentiment = analyze_sentiment_spacy(utterance.text)
+            
+            sentiments.append({
+                "text": utterance.text,
+                "speaker": utterance.speaker,
+                "sentiment": sentiment,
+            })
+
+        return transcript.text, speaker_text, sentiments, None
+
+    except Exception as e:
+        # Clean up temporary file if it existss
+        if os.path.exists("temp_audio.mp3"):
+            os.remove("temp_audio.mp3")
+        return "", "", [], f"An error occurred: {str(e)}"
